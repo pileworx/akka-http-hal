@@ -6,9 +6,9 @@ import ContentTypeResolver.Default
 
 trait HalBrowserService {
   val browserRoutes = path("halbrowser") {
-    getFromResource("halbrowser/browser.html")
+    getFromResource("dependencies/halbrowser/browser.html")
   } ~
   path("halbrowser" / RestPath) { rpath =>
-    getFromResource(s"halbrowser/$rpath")
+    getFromResource(s"dependencies/halbrowser/$rpath")
   }
 }
