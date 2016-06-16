@@ -1,2 +1,2 @@
-# akka-http-hateoas
-HATEOAS support for akka-http
+# akka-http-hal
+HAL specification support for akka-http
