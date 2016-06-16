@@ -1,4 +1,4 @@
-package akka.http.hateoas
+package akka.http.rest.hal
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives._

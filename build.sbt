@@ -1,4 +1,4 @@
-name := """akka-http-hateoas"""
+name := """akka-http-hal"""
 
 version := "1.0.0"
 
