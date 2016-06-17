@@ -5,7 +5,8 @@ import akka.http.scaladsl.server.directives._
 import ContentTypeResolver.Default
 
 trait HalBrowserService {
-  val browserRoutes = path("halbrowser") {
+  val halBrowserRoutes =
+  path("halbrowser") {
     getFromResource("dependencies/halbrowser/browser.html")
   } ~
   path("halbrowser" / RestPath) { rpath =>
