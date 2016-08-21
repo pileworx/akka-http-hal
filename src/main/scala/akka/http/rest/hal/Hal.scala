@@ -1,5 +1,7 @@
 package akka.http.rest.hal
 
+import akka.http.rest.headers.{ForwardedHost, ForwardedPrefix, ForwardedProto}
+import akka.http.scaladsl.model.HttpRequest
 import spray.json._
 
 trait HalProtocol extends DefaultJsonProtocol {
@@ -9,7 +11,8 @@ trait HalProtocol extends DefaultJsonProtocol {
 case class ResourceBuilder(
   withData:Option[JsValue] = None,
   withLinks:Option[Map[String, Link]] = None,
-  withEmbedded:Option[Map[String, Seq[JsValue]]] = None
+  withEmbedded:Option[Map[String, Seq[JsValue]]] = None,
+  withRequest:Option[HttpRequest] = None
 ) extends HalProtocol {
 
   def build(): JsValue = withData match {
@@ -23,13 +26,29 @@ case class ResourceBuilder(
   }
 
   private def addLinks(jsObject:JsObject):JsObject = withLinks match {
-    case Some(links) => JsObject(jsObject.fields + ("_links" -> links.map { case (key, value) => (key, value.toJson) }.toJson))
+    case Some(links) => JsObject(jsObject.fields + ("_links" -> links.map {
+      case (key, value) => (key, {
+        value.copy(href = extractUrl + value.href)
+      })
+    }.toJson))
     case _ => jsObject
   }
 
   private def addEmbedded(jsObject:JsObject):JsObject = withEmbedded match {
     case Some(embedded) => JsObject(jsObject.fields + ("_embedded" -> embedded.toJson))
     case _ => jsObject
+  }
+
+  private def extractUrl = withRequest match {
+    case Some(req) => {
+      for {
+        proto <- req.header[ForwardedProto]
+        host <- req.header[ForwardedHost]
+        port <- req.header[ForwardedProto]
+        prefix <- req.header[ForwardedPrefix]
+      } yield s"${proto.value}://${host.value}:${port.value}/${prefix.value}"
+    }
+    case _ => ""
   }
 }
 
