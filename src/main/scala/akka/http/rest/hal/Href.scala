@@ -45,7 +45,10 @@ case class ForwardedBuilder(req:HttpRequest) {
   }
 
   private def addPort(host:String) = withPort match {
-    case Some(xfp) => addPrefix(s"$host:${xfp.value}")
+    case Some(xfp) => {
+      if (host.length < 1) addPrefix(s"${req.uri.scheme}://${req.uri.authority}:${xfp}")
+      else addPrefix(s"$host:${xfp.value}")
+    }
     case _ => addPrefix(host)
   }
 
