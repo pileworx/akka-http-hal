@@ -33,7 +33,10 @@ case class ForwardedBuilder(req:HttpRequest) {
 
   private def addProto = withProto match  {
     case Some(xfp) => addHost(s"${xfp.value}://")
-    case _ => addHost("")
+    case _ => withHost match {
+      case Some(h) => addHost("http://")
+      case _ => addHost("")
+    }
   }
 
   private def addHost(protocol:String) = withHost match {
