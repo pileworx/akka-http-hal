@@ -14,7 +14,7 @@ case class ResourceBuilder(
   withRequest:Option[HttpRequest] = None
 ) extends HalProtocol {
 
-  def build(): JsValue = withData match {
+  def build: JsValue = withData match {
     case Some(data) => makeHal(data)
     case None => makeHal(JsObject())
   }
@@ -26,9 +26,7 @@ case class ResourceBuilder(
 
   private def addLinks(jsObject:JsObject):JsObject = withLinks match {
     case Some(links) => JsObject(jsObject.fields + ("_links" -> links.map {
-      case (key, value) => (key, {
-        value.copy(href = extractUrl.getOrElse("") + value.href)
-      })
+      case (key, value) => (key, value.copy(href = Href.make(withRequest)))
     }.toJson))
     case _ => jsObject
   }
@@ -36,11 +34,6 @@ case class ResourceBuilder(
   private def addEmbedded(jsObject:JsObject):JsObject = withEmbedded match {
     case Some(embedded) => JsObject(jsObject.fields + ("_embedded" -> embedded.toJson))
     case _ => jsObject
-  }
-
-  private def extractUrl:Option[String] = withRequest match {
-    case Some(req) => Some(Forwarded.makeUrl(req))
-    case _ => None
   }
 }
 
