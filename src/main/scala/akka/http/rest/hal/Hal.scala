@@ -1,6 +1,5 @@
 package akka.http.rest.hal
 
-import akka.http.rest.headers.{ForwardedHost, ForwardedPrefix, ForwardedProto}
 import akka.http.scaladsl.model.HttpRequest
 import spray.json._
 
@@ -28,7 +27,7 @@ case class ResourceBuilder(
   private def addLinks(jsObject:JsObject):JsObject = withLinks match {
     case Some(links) => JsObject(jsObject.fields + ("_links" -> links.map {
       case (key, value) => (key, {
-        value.copy(href = extractUrl + value.href)
+        value.copy(href = extractUrl.getOrElse("") + value.href)
       })
     }.toJson))
     case _ => jsObject
@@ -39,16 +38,9 @@ case class ResourceBuilder(
     case _ => jsObject
   }
 
-  private def extractUrl = withRequest match {
-    case Some(req) => {
-      for {
-        proto <- req.header[ForwardedProto]
-        host <- req.header[ForwardedHost]
-        port <- req.header[ForwardedProto]
-        prefix <- req.header[ForwardedPrefix]
-      } yield s"${proto.value}://${host.value}:${port.value}/${prefix.value}"
-    }
-    case _ => ""
+  private def extractUrl:Option[String] = withRequest match {
+    case Some(req) => Some(Forwarded.makeUrl(req))
+    case _ => None
   }
 }
 
