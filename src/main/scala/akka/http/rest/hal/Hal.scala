@@ -26,7 +26,7 @@ case class ResourceBuilder(
 
   private def addLinks(jsObject:JsObject):JsObject = withLinks match {
     case Some(links) => JsObject(jsObject.fields + ("_links" -> links.map {
-      case (key, value) => (key, value.copy(href = Href.make(withRequest)))
+      case (key, value) => (key, value.copy(href = s"${Href.make(withRequest)}${value.href}" ))
     }.toJson))
     case _ => jsObject
   }
