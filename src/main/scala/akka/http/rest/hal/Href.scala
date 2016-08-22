@@ -32,22 +32,22 @@ case class ForwardedBuilder(req:HttpRequest) {
   def build = addProto
 
   private def addProto = withProto match  {
-    case Some(xfp) => addHost(s"$xfp://")
+    case Some(xfp) => addHost(s"${xfp.value}://")
     case _ => addHost("")
   }
 
   private def addHost(protocol:String) = withHost match {
-    case Some(xfh) => addPort(s"$protocol$xfh")
+    case Some(xfh) => addPort(s"$protocol${xfh.value}")
     case _ => addPort(protocol)
   }
 
   private def addPort(host:String) = withPort match {
-    case Some(xfp) => addPrefix(s"$host:$xfp")
+    case Some(xfp) => addPrefix(s"$host:${xfp.value}")
     case _ => addPrefix(host)
   }
 
   private def addPrefix(port:String) = withPrefix match {
-    case Some(xfp) => s"$port/$xfp"
+    case Some(xfp) => s"$port/${xfp.value}"
     case _ => port
   }
 }
