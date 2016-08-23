@@ -17,9 +17,11 @@ case class ForwardedBuilder(req:HttpRequest) {
   private val withProto:Option[String] = req.headers.collectFirst {
     case h:HttpHeader if h.name == "X-Forwarded-Proto" => h.value
   }
-  private val withHost:Option[String] = req.headers.collectFirst {
-    case h:HttpHeader if h.name == "X-Forwarded-Host" => h.value
-    case h:HttpHeader if h.name == "Host" => extractHost(h.value)
+
+  private val withHost:Option[String] = {
+    val xForwarded = req.headers.collectFirst { case h:HttpHeader if h.name == "X-Forwarded-Host" => h.value }
+    val hostHeader = req.headers.collectFirst { case h:HttpHeader if h.name == "Host" => extractHost(h.value) }
+    if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
 
   private val withPort:Option[String] = req.headers.collectFirst {
