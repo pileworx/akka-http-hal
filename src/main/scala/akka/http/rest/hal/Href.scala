@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 
 object Href {
   def make(maybeRequest:Option[HttpRequest]):String = maybeRequest match {
-    case Some(req) => if (containsForwarded(req)) ForwardedBuilder(req).build else UrlBuilder().build
+    case Some(req) => if (containsForwarded(req)) ForwardedBuilder(req).build else UrlBuilder(req).build
     case None => ""
   }
 
@@ -65,6 +65,9 @@ case class ForwardedBuilder(req:HttpRequest) {
   }
 }
 
-case class UrlBuilder() {
-  def build = ???
+case class UrlBuilder(req:HttpRequest) {
+  private val proto:String = req.protocol.value
+  private val host:String = req.headers.collectFirst { case h:HttpHeader if h.name == "Host" => h.value}.getOrElse("")
+
+  def build = s"${proto}://${host}"
 }
