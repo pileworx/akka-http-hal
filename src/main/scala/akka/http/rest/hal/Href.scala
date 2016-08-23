@@ -20,7 +20,7 @@ case class ForwardedBuilder(req:HttpRequest) {
 
   private val withHost:Option[String] = {
     val xForwarded = req.headers.collectFirst { case h:HttpHeader if h.name == "X-Forwarded-Host" => h.value }
-    val hostHeader = req.headers.collectFirst { case h:HttpHeader if h.name == "Host" => extractHost(h.value) }
+    val hostHeader = Some(req.uri.authority.host.address)
     if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
 
@@ -66,8 +66,9 @@ case class ForwardedBuilder(req:HttpRequest) {
 }
 
 case class UrlBuilder(req:HttpRequest) {
-  private val proto:String = req.protocol.value
-  private val host:String = req.headers.collectFirst { case h:HttpHeader if h.name == "Host" => h.value}.getOrElse("")
+  private val proto:String = req.uri.scheme
+  private val host:String = req.uri.authority.host.address
+  private val port:Int = req.uri.authority.port
 
-  def build = s"${proto}://${host}"
+  def build = s"${proto}://${host}:${port}"
 }
