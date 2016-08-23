@@ -14,25 +14,26 @@ object Href {
 }
 
 case class ForwardedBuilder(req:HttpRequest) {
-  private val withProto:Option[HttpHeader] = req.headers.collectFirst {
-    case h:HttpHeader if h.name() == "X-Forwarded-Proto" => h
+  private val withProto:Option[String] = req.headers.collectFirst {
+    case h:HttpHeader if h.name == "X-Forwarded-Proto" => h.value
   }
-  private val withHost:Option[HttpHeader] = req.headers.collectFirst {
-    case h:HttpHeader if h.name() == "X-Forwarded-Host" => h
-  }
-
-  private val withPort:Option[HttpHeader] = req.headers.collectFirst {
-    case h:HttpHeader if h.name() == "X-Forwarded-Port" => h
+  private val withHost:Option[String] = req.headers.collectFirst {
+    case h:HttpHeader if h.name == "X-Forwarded-Host" => h.value
+    case h:HttpHeader if h.name == "Host" => extractHost(h.value)
   }
 
-  private val withPrefix:Option[HttpHeader] = req.headers.collectFirst {
-    case h:HttpHeader if h.name() == "X-Forwarded-Prefix" => h
+  private val withPort:Option[String] = req.headers.collectFirst {
+    case h:HttpHeader if h.name == "X-Forwarded-Port" => h.value
+  }
+
+  private val withPrefix:Option[String] = req.headers.collectFirst {
+    case h:HttpHeader if h.name == "X-Forwarded-Prefix" => h.value
   }
 
   def build = addProto
 
   private def addProto = withProto match  {
-    case Some(xfp) => addHost(s"${xfp.value}://")
+    case Some(xfp) => addHost(s"$xfp://")
     case _ => withHost match {
       case Some(h) => addHost("http://")
       case _ => addHost("")
@@ -40,47 +41,28 @@ case class ForwardedBuilder(req:HttpRequest) {
   }
 
   private def addHost(protocol:String) = withHost match {
-    case Some(xfh) => addPort(s"$protocol${xfh.value}")
+    case Some(xfh) => addPort(s"$protocol$xfh")
     case _ => addPort(protocol)
   }
 
   private def addPort(host:String) = withPort match {
-    case Some(xfp) => {
-      if (host.length < 1) addPrefix(s"${req.uri.scheme}:${req.uri.authority}:${xfp.value}")
-      else addPrefix(s"$host:${xfp.value}")
-    }
+    case Some(xfp) => addPrefix(s"$host:$xfp")
     case _ => addPrefix(host)
   }
 
   private def addPrefix(port:String) = withPrefix match {
-    case Some(xfp) => s"$port/${xfp.value}"
+    case Some(xfp) => s"$port/$xfp"
     case _ => port
+  }
+
+  private def extractHost(hostWithPort:String):String = {
+    "^.*(?=(\\:))".r findFirstMatchIn hostWithPort match {
+      case Some(found) => found.toString
+      case _ => hostWithPort
+    }
   }
 }
 
 case class UrlBuilder() {
   def build = ???
 }
-
-
-/**
-def addUrl(req:HttpRequest):String = {
-  val proto:HttpHeader = req.headers.collectFirst {
-  case h:HttpHeader if h.name() == "X-Forwarded-Proto" => h
-}.getOrElse(RawHeader("",""))
-
-  val host:HttpHeader = req.headers.collectFirst {
-  case h:HttpHeader if h.name() == "X-Forwarded-Host" => h
-}.getOrElse(RawHeader("",""))
-
-  val port:HttpHeader = req.headers.collectFirst {
-  case h:HttpHeader if h.name() == "X-Forwarded-Port" => h
-}.getOrElse(RawHeader("",""))
-
-  val prefix:HttpHeader = req.headers.collectFirst {
-  case h:HttpHeader if h.name() == "X-Forwarded-Prefix" => h
-}.getOrElse(RawHeader("",""))
-
-  s"${proto.value}://${host.value}:${port.value}/${prefix.value}"
-}
-*/
