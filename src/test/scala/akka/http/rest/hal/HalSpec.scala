@@ -24,7 +24,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
 
     "return a resource with a provided link" in {
       val result = ResourceBuilder(
-        withLinks = Some(links)).build().toString()
+        withLinks = Some(links)).build.toString
 
       result should include(url)
       result should include("self")
@@ -34,7 +34,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
 
     "return a resource with a provided embedded" in {
       val result = ResourceBuilder(
-        withEmbedded = Some(embedded)).build().toString()
+        withEmbedded = Some(embedded)).build.toString
 
       result should include("fakesOne")
       result should include("fakesTwo")
@@ -47,7 +47,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
 
     "return a resource with the provided data" in {
       val result = ResourceBuilder(
-        withData = Some(data)).build().toString()
+        withData = Some(data)).build.toString
 
       result should include("one")
       result should include("two")
@@ -55,21 +55,21 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
 
     "return a resource with the _links property if no links are provided" in {
       val result = ResourceBuilder(
-        withData = Some(data)).build().toString()
+        withData = Some(data)).build.toString
 
       result should not include "_links"
     }
 
     "return a resource with the _embedded property if no embedded objects are provided" in {
       val result = ResourceBuilder(
-        withData = Some(data)).build().toString()
+        withData = Some(data)).build.toString
 
       result should not include "_embedded"
     }
 
     "return a resource without optional _link properties if unused" in {
       val result = ResourceBuilder(
-        withLinks = links(Link(href = url))).build().toString()
+        withLinks = links(Link(href = url))).build.toString
 
       result should not include "templated"
       result should not include "type"
@@ -85,7 +85,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = links(Link(
           href = url,
           templated = Some(true)
-        ))).build().toString()
+        ))).build.toString
 
       result should include("templated")
     }
@@ -95,7 +95,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = links(Link(
           href = url,
           `type` = Some("mything")
-        ))).build().toString()
+        ))).build.toString
 
       result should include("type")
     }
@@ -105,7 +105,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = links(Link(
           href = url,
           deprecation = Some(true)
-        ))).build().toString()
+        ))).build.toString
 
       result should include("deprecation")
     }
@@ -115,7 +115,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = links(Link(
           href = url,
           name = Some("thisisme")
-        ))).build().toString()
+        ))).build.toString
 
       result should include("name")
     }
@@ -125,7 +125,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = links(Link(
           href = url,
           profile = Some("alps")
-        ))).build().toString()
+        ))).build.toString
 
       result should include("profile")
     }
@@ -135,7 +135,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = links(Link(
           href = url,
           title = Some("my thing")
-        ))).build().toString()
+        ))).build.toString
 
       result should include("title")
     }
@@ -145,7 +145,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = links(Link(
           href = url,
           hreflang = Some("en-us")
-        ))).build().toString()
+        ))).build.toString
 
       result should include("hreflang")
     }

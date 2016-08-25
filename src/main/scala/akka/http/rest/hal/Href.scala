@@ -8,7 +8,7 @@ object Href {
     case None => ""
   }
 
-  def containsForwarded(req:HttpRequest) = {
+  private def containsForwarded(req:HttpRequest) = {
     req.headers.exists(xf => xf.name.contains("X-Forwarded"))
   }
 }
@@ -20,7 +20,7 @@ case class ForwardedBuilder(req:HttpRequest) {
 
   private val withHost:Option[String] = {
     val xForwarded = req.headers.collectFirst { case h:HttpHeader if h.name == "X-Forwarded-Host" => h.value }
-    val hostHeader = Some(req.uri.authority.host.address)
+    val hostHeader = if (req.uri.authority.host.address.length > 0) Some(req.uri.authority.host.address) else None
     if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
 
@@ -32,9 +32,7 @@ case class ForwardedBuilder(req:HttpRequest) {
     case h:HttpHeader if h.name == "X-Forwarded-Prefix" => h.value
   }
 
-  def build = addProto
-
-  private def addProto = withProto match  {
+  def build  = withProto match  {
     case Some(xfp) => addHost(s"$xfp://")
     case _ => withHost match {
       case Some(h) => addHost("http://")
@@ -56,13 +54,6 @@ case class ForwardedBuilder(req:HttpRequest) {
     case Some(xfp) => s"$port/$xfp"
     case _ => port
   }
-
-  private def extractHost(hostWithPort:String):String = {
-    "^.*(?=(\\:))".r findFirstMatchIn hostWithPort match {
-      case Some(found) => found.toString
-      case _ => hostWithPort
-    }
-  }
 }
 
 case class UrlBuilder(req:HttpRequest) {
@@ -70,5 +61,5 @@ case class UrlBuilder(req:HttpRequest) {
   private val host:String = req.uri.authority.host.address
   private val port:Int = req.uri.authority.port
 
-  def build = s"${proto}://${host}:${port}"
+  def build = s"$proto://$host:$port"
 }
