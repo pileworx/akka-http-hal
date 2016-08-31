@@ -138,4 +138,5 @@ the browser will be available at /halbrowser
 TODO
 -----------
 curies support.
-find more contributors (hint)
+
+find more contributors. (hint)
