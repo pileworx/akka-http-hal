@@ -109,7 +109,7 @@ By default the HAL links will not include the host or port.
 If you would like host, port, or path prefix included, provide the HttpRequest.
 
 ```scala
-  def toResource(foo:FooDto): JsValue = {
+  def toResource(foo:FooDto, req:HttpRequest): JsValue = {
     ResourceBuilder(
       withRequest = req,
       withData = Some(foo.toJson),
