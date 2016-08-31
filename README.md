@@ -124,3 +124,13 @@ If you would like host, port, or path prefix included, provide the HttpRequest.
 
 This will produce a link with either the current host's information OR construct the links based on
 the X-Forwarded-Proto, X-Forwarded-Host, X-Forwarded-Port, and X-Forwarded-Prefix headers.
+
+HAL Browser
+-----------
+To expose HAL Browser from your API add the halBrowser route
+
+```scala
+val routes = otherRoutes ~ halBrowserRoutes
+```
+
+the browser will be available at /halbrowser
