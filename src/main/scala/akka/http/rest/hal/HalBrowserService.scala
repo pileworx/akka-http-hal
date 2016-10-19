@@ -9,7 +9,7 @@ trait HalBrowserService {
   path("halbrowser") {
     getFromResource("dependencies/halbrowser/browser.html")
   } ~
-  path("halbrowser" / RestPath) { rpath =>
+  path("halbrowser" / RemainingPath) { rpath =>
     getFromResource(s"dependencies/halbrowser/$rpath")
   }
 }
