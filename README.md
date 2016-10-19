@@ -134,3 +134,9 @@ val routes = otherRoutes ~ halBrowserRoutes
 ```
 
 the browser will be available at /halbrowser
+
+TODO
+-----------
+curies support.
+
+find more contributors. (hint)
