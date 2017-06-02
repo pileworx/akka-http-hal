@@ -32,10 +32,10 @@ case class ForwardedBuilder(req:HttpRequest) {
     case h:HttpHeader if h.name == "X-Forwarded-Prefix" => h.value
   }
 
-  def build  = withProto match  {
+  def build: String = withProto match  {
     case Some(xfp) => addHost(s"$xfp://")
     case _ => withHost match {
-      case Some(h) => addHost("http://")
+      case Some(_) => addHost("http://")
       case _ => addHost("")
     }
   }

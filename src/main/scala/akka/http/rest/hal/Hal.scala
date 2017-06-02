@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.HttpRequest
 import spray.json._
 
 trait HalProtocol extends DefaultJsonProtocol {
-  implicit val linkFormat = jsonFormat8(Link)
+  implicit val linkFormat: RootJsonFormat[Link] = jsonFormat8(Link)
 }
 
 case class ResourceBuilder(

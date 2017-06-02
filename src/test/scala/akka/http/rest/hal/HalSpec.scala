@@ -4,13 +4,13 @@ import org.scalatest.{Matchers, WordSpec}
 import spray.json._
 
 trait FakeDataProtocol extends DefaultJsonProtocol {
-  implicit val fakeDataFormat = jsonFormat2(FakeData)
+  implicit val fakeDataFormat: RootJsonFormat[FakeData] = jsonFormat2(FakeData)
 }
 
 class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
 
   val url = "http://www.test.com"
-  val data = FakeData("one","two").toJson
+  val data: JsValue = FakeData("one","two").toJson
   val links = Map(
     "self" -> Link(href = url),
     "parent" -> Link(href = url)
