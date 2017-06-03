@@ -5,9 +5,16 @@ import spray.json._
 
 trait HalProtocol extends DefaultJsonProtocol {
   implicit val linkFormat: RootJsonFormat[Link] = jsonFormat8(Link)
+  implicit val curieFormat: RootJsonFormat[Curie] = jsonFormat3(Curie)
+}
+
+object ResourceBuilder {
+  protected var globalCuries: Option[Seq[Curie]] = None
+  def curies(curies:Seq[Curie]): Unit = globalCuries = Some(curies)
 }
 
 case class ResourceBuilder(
+  withCuries:Option[Seq[Curie]] = None,
   withData:Option[JsValue] = None,
   withLinks:Option[Map[String, Link]] = None,
   withEmbedded:Option[Map[String, Seq[JsValue]]] = None,
@@ -24,9 +31,11 @@ case class ResourceBuilder(
     case _ => jsValue
   }
 
-  private def addLinks(jsObject:JsObject):JsObject = withLinks match {
+  private def addLinks(jsObject:JsObject):JsObject = combinedLinks match {
     case Some(links) => JsObject(jsObject.fields + ("_links" -> links.map {
-      case (key, value) => (key, value.copy(href = s"${Href.make(withRequest)}${value.href}" ))
+      case (key, value:Link) =>
+        (key, value.copy(href = s"${if (!curied(key)) Href.make(withRequest)}${value.href}").toJson)
+      case (key, value:Seq[Curie]) => (key, value.toJson)
     }.toJson))
     case _ => jsObject
   }
@@ -35,6 +44,33 @@ case class ResourceBuilder(
     case Some(embedded) => JsObject(jsObject.fields + ("_embedded" -> embedded.toJson))
     case _ => jsObject
   }
+
+  private def combinedLinks: Option[Map[String, AnyRef]] = {
+    val combinedLinks = getLinks ++ combinedCuries
+    if (combinedLinks.isEmpty) None else Some(combinedLinks)
+  }
+
+  private def getLinks:Map[String, Link] = withLinks match {
+    case Some(links) => links
+    case _ => Map()
+  }
+
+  private def combinedCuries:Map[String, Seq[Curie]] = {
+    val curies:Seq[Curie] = getGlobalCuries ++ getCuries
+    if (curies.isEmpty) Map() else Map(("curies", curies))
+  }
+
+  private def getCuries: Seq[Curie] = withCuries match {
+    case Some(curies) => curies
+    case _ => Seq[Curie]()
+  }
+
+  private def getGlobalCuries: Seq[Curie] = ResourceBuilder.globalCuries match {
+    case Some(curies) => curies
+    case _ => Seq[Curie]()
+  }
+
+  private def curied(key: String) = key.contains(":")
 }
 
 case class Link(
@@ -46,4 +82,10 @@ case class Link(
   profile:Option[String] = None,
   title:Option[String] = None,
   hreflang:Option[String] = None
+)
+
+case class Curie(
+  name:String,
+  href:String,
+  templated:Boolean = true
 )

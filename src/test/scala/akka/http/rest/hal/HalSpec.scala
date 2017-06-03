@@ -9,6 +9,8 @@ trait FakeDataProtocol extends DefaultJsonProtocol {
 
 class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
 
+  val curieKey = "pw"
+  val curieUrl = "http://pileworx.io/{rel}"
   val url = "http://www.test.com"
   val data: JsValue = FakeData("one","two").toJson
   val links = Map(
@@ -149,9 +151,58 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
 
       result should include("hreflang")
     }
+
+    "return curies in links if curies are provided" in {
+      val result = ResourceBuilder(
+        withCuries = Some(Seq(Curie(
+          name = curieKey,
+          href = curieUrl
+        )))).build.toString
+
+      result should include("_links")
+      result should include("curies")
+      result should include(curieKey)
+      result should include(curieUrl)
+      println(result)
+    }
+
+    "return curies in links if curies are provided globally" in {
+      val gCurieKey = "ak"
+      val gCurieUrl = "http://akka.io/{rel}"
+      ResourceBuilder.curies(Seq(Curie(name = gCurieKey, href = gCurieUrl)))
+
+      val result = ResourceBuilder().build.toString
+
+      result should include("_links")
+      result should include("curies")
+      result should include(gCurieKey)
+      result should include(gCurieUrl)
+      println(result)
+    }
+
+    "return curies in links if curies are provided globally and locally" in {
+      val gCurieKey = "ts"
+      val gCurieUrl = "http://typesafe.io/{rel}"
+      ResourceBuilder.curies(Seq(Curie(name = gCurieKey, href = gCurieUrl)))
+
+      val result = ResourceBuilder(
+        withCuries = Some(Seq(Curie(
+          name = curieKey,
+          href = curieUrl
+      )))).build.toString
+
+      result should include("_links")
+      result should include("curies")
+      result should include(gCurieKey)
+      result should include(gCurieUrl)
+      result should include(curieKey)
+      result should include(curieUrl)
+      println(result)
+    }
   }
 
   def links(link:Link):Option[Map[String,Link]] = Some(Map("self" -> link))
+  def linksWithCurie(link:Link):Option[Map[String,Link]] = Some(Map(curieKey + ":find" -> link))
 }
 
 case class FakeData(title:String, description:String)
