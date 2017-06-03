@@ -20,8 +20,8 @@ lazy val akkaHttpHal = ProjectRef(
 lazy val root = (project in file(".")).dependsOn(akkaHttpHal)
 ```
 
-Usage:
-
+Usage
+-----
 Create your marshaller:
 ```scala
 trait FooProtocol extends DefaultJsonProtocol {
@@ -101,6 +101,30 @@ trait FooRestPort extends FooAdapter {
 }
 ```
 
+Curies Support
+--------------
+
+Curies are supported in two ways.
+
+The first is per resource:
+```scala
+ResourceBuilder(
+  withCuries = Some(Seq(Curie(
+    name = "ts",
+    href = "http://typesafe.com/{rel}"
+)))).build
+```
+The second, and most likely more common way, is to set them globally:
+```scala
+ResourceBuilder.curies(Seq(
+  Curie(name = "ts", href = "http://typesafe.com/{rel}"),
+  Curie(name = "akka", href = "http://akka.io/{rel}")
+))
+```
+Note: If you mix global and resource based curies they will be combined. Currently we do not check for duplicate entries.
+
+For the links pointing to a curie, just prefix the key with the curie name and colon (ex "ts:info"). If a colon is found in a key, we do not alter the href by adding X-Forwarded data or the request host/port.
+
 HttpRequest Support
 -------------------
 
@@ -137,6 +161,5 @@ the browser will be available at /halbrowser
 
 TODO
 -----------
-curies support.
-
+Publish to maven central
 find more contributors. (hint)
