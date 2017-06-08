@@ -163,7 +163,6 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
       result should include("curies")
       result should include(curieKey)
       result should include(curieUrl)
-      println(result)
     }
 
     "return curies in links if curies are provided globally" in {
@@ -177,7 +176,6 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
       result should include("curies")
       result should include(gCurieKey)
       result should include(gCurieUrl)
-      println(result)
     }
 
     "return curies in links if curies are provided globally and locally" in {
@@ -197,7 +195,6 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
       result should include(gCurieUrl)
       result should include(curieKey)
       result should include(curieUrl)
-      println(result)
     }
   }
 
