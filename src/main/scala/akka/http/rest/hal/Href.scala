@@ -19,7 +19,7 @@ case class ForwardedBuilder(req:HttpRequest) {
   }
 
   private val withHost:Option[String] = {
-    val xForwarded = req.headers.collectFirst { case h:HttpHeader if h.name == "X-Forwarded-Host" => h.value }
+    val xForwarded = req.headers.collectFirst { case h:HttpHeader if h.name == "X-Forwarded-Host" => stripPort(h.value) }
     val hostHeader = if (req.uri.authority.host.address.length > 0) Some(req.uri.authority.host.address) else None
     if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
@@ -53,6 +53,10 @@ case class ForwardedBuilder(req:HttpRequest) {
   private def addPrefix(port:String) = withPrefix match {
     case Some(xfp) => s"$port/$xfp"
     case _ => port
+  }
+
+  private def stripPort(hostname:String) = {
+    if(hostname.contains(":")) hostname.split(":")(0) else hostname
   }
 }
 

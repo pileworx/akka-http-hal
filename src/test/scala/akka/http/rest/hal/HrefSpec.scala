@@ -38,6 +38,11 @@ class HrefSpec extends WordSpec with Matchers {
       val result = Href.make(requestWithUriAndForwardedPort)
       result should be(s"$uriProto://$uriHost:$xfPortNumber")
     }
+
+    "return a url containing the uri host and X-Forwarded-Port without a second port" in {
+      val result = Href.make(forwardedWithHostPortAndPort)
+      result should be(s"$uriProto://$xfHostName:$xfPortNumber")
+    }
   }
 
   "Href make with no request" should {
@@ -75,6 +80,11 @@ class HrefSpec extends WordSpec with Matchers {
     Some(HttpRequest.apply(uri = Uri./, headers = headers))
   }
 
+  private def forwardedWithHostPortAndPort = {
+    val headers: Seq[HttpHeader] = Seq(xfHostWithPort, xfPort)
+    Some(HttpRequest.apply(uri = Uri./, headers = headers))
+  }
+
   private def forwardedWithHostAndPrefix = {
     val headers: Seq[HttpHeader] = Seq(xfHost, xfPrefix)
     Some(HttpRequest.apply(uri = Uri./, headers = headers))
@@ -87,6 +97,9 @@ class HrefSpec extends WordSpec with Matchers {
 
   private val xfHostName = "www.myhost.com"
   private val xfHost = RawHeader("X-Forwarded-Host", xfHostName)
+
+  private val xfHostNameWithPort = "www.myhost.com:7900"
+  private val xfHostWithPort = RawHeader("X-Forwarded-Host", xfHostNameWithPort)
 
   private val xfPortNumber = "9000"
   private val xfPort = RawHeader("X-Forwarded-Port", xfPortNumber)
