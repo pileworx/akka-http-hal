@@ -7,8 +7,8 @@ scalaVersion := "2.12.2"
 scalacOptions := Seq("-feature", "-deprecation", "-encoding", "utf8")
 
 libraryDependencies ++= {
-  val akkaV = "2.5.2"
-  val akkaHttpV = "10.0.7"
+  val akkaV = "2.5.3"
+  val akkaHttpV = "10.0.9"
   Seq(
     "com.typesafe.akka" %% "akka-http-core" % akkaHttpV,
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
