@@ -13,7 +13,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
   val curieUrl = "http://pileworx.io/{rel}"
   val url = "http://www.test.com"
   val data: JsValue = FakeData("one","two").toJson
-  val links = Map(
+  val links:Map[String, LinkT] = Map(
     "self" -> Link(href = url),
     "parent" -> Link(href = url)
     )
