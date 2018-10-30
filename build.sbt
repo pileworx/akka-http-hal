@@ -1,14 +1,14 @@
 name := """akka-http-hal"""
 
-version := "1.0.1"
+version := "1.2.0"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.6"
 
 scalacOptions := Seq("-feature", "-deprecation", "-encoding", "utf8")
 
 libraryDependencies ++= {
-  val akkaV = "2.4.19"
-  val akkaHttpV = "10.0.9"
+  val akkaV = "2.5.14"
+  val akkaHttpV = "10.1.4"
   Seq(
     "com.typesafe.akka" %% "akka-http-core" % akkaHttpV,
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
