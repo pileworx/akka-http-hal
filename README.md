@@ -125,6 +125,35 @@ Note: If you mix global and resource based curies they will be combined. Current
 
 For the links pointing to a curie, just prefix the key with the curie name and colon (ex "ts:info"). If a colon is found in a key, we do not alter the href by adding X-Forwarded data or the request host/port.
 
+Array of Links Support
+----------------------
+If you require an array of links:
+```json
+{
+  "_links": {
+    "multiple_links": [
+      {
+        "href": "http://www.test.com?foo=bar",
+        "title": "one"
+      },
+      {
+        "href": "http://www.test.com?bar=baz",
+        "title": "two"
+      }
+    ]
+  }
+}
+```
+This can be achieved by using the Links class which accepts a Sequence of Link:
+
+```scala
+Map(
+  "multiple_links" -> Links(Seq(
+    Link(href = url, title = Some("one")),
+    Link(href = url, title = Some("two")))
+)
+```
+
 HttpRequest Support
 -------------------
 

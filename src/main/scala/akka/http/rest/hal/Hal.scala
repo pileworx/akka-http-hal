@@ -16,7 +16,7 @@ object ResourceBuilder {
 case class ResourceBuilder(
   withCuries:Option[Seq[Curie]] = None,
   withData:Option[JsValue] = None,
-  withLinks:Option[Map[String, Link]] = None,
+  withLinks:Option[Map[String, LinkT]] = None,
   withEmbedded:Option[Map[String, Seq[JsValue]]] = None,
   withRequest:Option[HttpRequest] = None
 ) extends HalProtocol {
@@ -34,8 +34,12 @@ case class ResourceBuilder(
   private def addLinks(jsObject:JsObject):JsObject = combinedLinks match {
     case Some(links) => JsObject(jsObject.fields + ("_links" -> links.map {
       case (key, value:Link) =>
-        (key, value.copy(href = s"${if (!curied(key)) Href.make(withRequest)}${value.href}").toJson)
+        (key, value.copy(href = curieHref(key, value)).toJson)
+      case(key, value:Links) =>
+        val links:Seq[Link] = value.links.map(v => v.copy(href = curieHref(key, v)))
+        (key , links.toJson)
       case (key, value:Seq[Curie]) => (key, value.toJson)
+      case (_,_) => throw new HalException("Failed to create Links. Invalid key/value supplied.")
     }.toJson))
     case _ => jsObject
   }
@@ -45,12 +49,12 @@ case class ResourceBuilder(
     case _ => jsObject
   }
 
-  private def combinedLinks: Option[Map[String, AnyRef]] = {
+  private def combinedLinks: Option[Map[String, Any]] = {
     val combinedLinks = getLinks ++ combinedCuries
     if (combinedLinks.isEmpty) None else Some(combinedLinks)
   }
 
-  private def getLinks:Map[String, Link] = withLinks match {
+  private def getLinks:Map[String, LinkT] = withLinks match {
     case Some(links) => links
     case _ => Map()
   }
@@ -71,7 +75,11 @@ case class ResourceBuilder(
   }
 
   private def curied(key: String) = key.contains(":")
+
+  private def curieHref(key: String, value: Link) = s"${if (!curied(key)) Href.make(withRequest)}${value.href}"
 }
+
+trait LinkT
 
 case class Link(
   href:String,
@@ -82,10 +90,16 @@ case class Link(
   profile:Option[String] = None,
   title:Option[String] = None,
   hreflang:Option[String] = None
-)
+) extends LinkT
+
+case class Links(
+  links:Seq[Link]
+) extends LinkT
 
 case class Curie(
   name:String,
   href:String,
   templated:Boolean = true
 )
+
+class HalException(msg: String) extends Exception(msg)
