@@ -39,6 +39,7 @@ case class ResourceBuilder(
         val links:Seq[Link] = value.links.map(v => v.copy(href = curieHref(key, v)))
         (key , links.toJson)
       case (key, value:Seq[Curie]) => (key, value.toJson)
+      case (_,_) => throw new HalException("Failed to create Links. Invalid key/value supplied.")
     }.toJson))
     case _ => jsObject
   }
@@ -92,7 +93,7 @@ case class Link(
 ) extends LinkT
 
 case class Links(
-  links:List[Link]
+  links:Seq[Link]
 ) extends LinkT
 
 case class Curie(
@@ -100,3 +101,5 @@ case class Curie(
   href:String,
   templated:Boolean = true
 )
+
+class HalException(msg: String) extends Exception(msg)
