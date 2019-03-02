@@ -20,7 +20,7 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
   val linksNested:Map[String, LinkT] = Map(
     "link_nested" -> Links(Seq(Link(href = url, title = Some("one")),Link(href = url, title = Some("two"))))
   )
-  val embedded = Map(
+  val embedded: Map[String, Seq[JsValue]] = Map(
     "fakesOne" -> Seq(FakeData("one","two").toJson),
     "fakesTwo" -> Seq(FakeData("three","four").toJson)
   )
