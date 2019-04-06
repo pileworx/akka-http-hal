@@ -1,9 +1,9 @@
 akka-http-hal
 =============
 
-HAL Specification support library for akka-http
+HAL Specification support library for akka-http.
 
-Licensed under the Apache 2 license
+Licensed under the Apache 2 license.
 
 [![Build Status](https://travis-ci.org/marcuslange/akka-http-hal.svg?branch=master)](https://travis-ci.org/marcuslange/akka-http-hal)
 
@@ -25,16 +25,16 @@ Usage
 Create your marshaller:
 ```scala
 trait FooProtocol extends DefaultJsonProtocol {
-  implicit val fooFormat = jsonFormat3(fooDto)
+  implicit val fooFormat = jsonFormat3(FooDto)
 }
 ```
 Create a resource adapter:
 ```scala
 trait FooAdapter extends FooProtocol {
-  def fooLink(rel:String, id:String) = rel -> Link(href = s"/foos/$id")
-  def foosLink(rel:String) = rel -> Link(href = "/foos")
+  def fooLink(rel: String, id: String) = rel -> Link(href = s"/foos/$id")
+  def foosLink(rel: String) = rel -> Link(href = "/foos")
 
-  def newFoo(id:String): JsValue = {
+  def newResource(id: String): JsValue = {
     ResourceBuilder(
       withLinks = Some(Map(
         fooLink("self", id),
@@ -49,16 +49,16 @@ trait FooAdapter extends FooProtocol {
     ).build
   }
 
-  def toResources(fooss:Seq[FooDto]): JsValue = {
+  def toResources(foos: Seq[FooDto]): JsValue = {
     ResourceBuilder(
       withEmbedded = Some(Map(
-        "foos" -> contacts.map(f => toResource(f))
+        "foos" -> foos.map(f => toResource(f))
       )),
       withLinks = Some(Map(foosLink("self")))
     ).build
   }
 
-  def toResource(foo:FooDto): JsValue = {
+  def toResource(foo: FooDto): JsValue = {
     ResourceBuilder(
       withData = Some(foo.toJson),
       withLinks = Some(Map(
@@ -109,10 +109,9 @@ Curies are supported in two ways.
 The first is per resource:
 ```scala
 ResourceBuilder(
-  withCuries = Some(Seq(Curie(
-    name = "ts",
-    href = "http://typesafe.com/{rel}"
-)))).build
+  withCuries = Some(Seq(
+    Curie(name = "ts", href = "http://typesafe.com/{rel}")
+))).build
 ```
 The second, and most likely more common way, is to set them globally:
 ```scala
@@ -134,11 +133,11 @@ If you require an array of links:
     "multiple_links": [
       {
         "href": "http://www.test.com?foo=bar",
-        "title": "one"
+        "name": "one"
       },
       {
         "href": "http://www.test.com?bar=baz",
-        "title": "two"
+        "name": "two"
       }
     ]
   }
@@ -149,9 +148,9 @@ This can be achieved by using the Links class which accepts a Sequence of Link:
 ```scala
 Map(
   "multiple_links" -> Links(Seq(
-    Link(href = url, title = Some("one")),
-    Link(href = url, title = Some("two")))
-)
+    Link(href = url, name = Some("one")),
+    Link(href = url, name = Some("two"))
+))
 ```
 
 HttpRequest Support
@@ -162,7 +161,7 @@ By default the HAL links will not include the host or port.
 If you would like host, port, or path prefix included, provide the HttpRequest.
 
 ```scala
-  def toResource(foo:FooDto, req:HttpRequest): JsValue = {
+  def toResource(foo: FooDto, req: HttpRequest): JsValue = {
     ResourceBuilder(
       withRequest = req,
       withData = Some(foo.toJson),
@@ -180,15 +179,15 @@ the X-Forwarded-Proto, X-Forwarded-Host, X-Forwarded-Port, and X-Forwarded-Prefi
 
 HAL Browser
 -----------
-To expose HAL Browser from your API add the halBrowser route
+To expose HAL Browser from your API add the halBrowser route.
 
 ```scala
 val routes = otherRoutes ~ halBrowserRoutes
 ```
 
-the browser will be available at /halbrowser
+The browser will be available at /halbrowser.
 
 TODO
 -----------
-Publish to maven central
-find more contributors. (hint)
+Publish to maven central.  
+Find more contributors (hint).
