@@ -3,3 +3,11 @@ scala:
    - 2.12.8
 jdk:
   - oraclejdk11
+
+stages:
+  - test
+
+jobs:
+  include:
+    - stage: test
+      script: sbt clean coverage test coverageReport coverageAggregate codacyCoverage\
