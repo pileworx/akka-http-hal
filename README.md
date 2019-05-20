@@ -5,6 +5,7 @@ HAL Specification support library for akka-http.
 
 Licensed under the Apache 2 license.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/70e5fca95cef462b9fa57211a9d09cb1)](https://app.codacy.com/app/Pileworx/akka-http-hal?utm_source=github.com&utm_medium=referral&utm_content=pileworx/akka-http-hal&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/marcuslange/akka-http-hal.svg?branch=master)](https://travis-ci.org/marcuslange/akka-http-hal)
 
 Getting Started
