@@ -2,6 +2,8 @@ name := """akka-http-hal"""
 
 version := "1.2.1"
 
+organization := "io.pileworx"
+
 scalaVersion := "2.12.8"
 
 scalacOptions := Seq("-feature", "-deprecation", "-encoding", "utf8")

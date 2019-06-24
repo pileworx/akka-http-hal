@@ -1,4 +1,4 @@
-package akka.http.rest.hal
+package io.pileworx.akka.http.rest.hal
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives._

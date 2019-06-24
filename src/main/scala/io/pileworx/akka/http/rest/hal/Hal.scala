@@ -1,4 +1,4 @@
-package akka.http.rest.hal
+package io.pileworx.akka.http.rest.hal
 
 import akka.http.scaladsl.model.HttpRequest
 import spray.json._
