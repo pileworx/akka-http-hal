@@ -10,4 +10,4 @@ stages:
 jobs:
   include:
     - stage: test
-      script: sbt clean coverage +test coverageReport coverageAggregate codacyCoverage
+      script: sbt clean coverage test coverageReport coverageAggregate codacyCoverage
