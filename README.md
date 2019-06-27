@@ -5,7 +5,7 @@ HAL Specification support library for akka-http.
 
 Licensed under the Apache 2 license.
 
-[![Build Status](https://travis-ci.org/pileworx/akka-http-hal.svg?branch=master)](https://travis-ci.org/pileworx/akka-http-hal)
+[![Build Status](https://travis-ci.org/pileworx/akka-http-hal.svg?branch=develop)](https://travis-ci.org/pileworx/akka-http-hal)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2b351c4ec64e441f8b1bbf6ea4db3492)](https://www.codacy.com/app/Pileworx/akka-http-hal?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pileworx/akka-http-hal&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/2b351c4ec64e441f8b1bbf6ea4db3492)](https://www.codacy.com/app/Pileworx/akka-http-hal?utm_source=github.com&utm_medium=referral&utm_content=pileworx/akka-http-hal&utm_campaign=Badge_Coverage)
 
@@ -14,9 +14,9 @@ Getting Started
 
 Installation:
 ```scala
-libraryDependencies += "io.pileworx" %% "akka-http-hal" % "1.2.2"
+libraryDependencies += "io.pileworx" %% "akka-http-hal" % "1.2.3"
 ```
-This initial Maven Central Release only support Scala 2.12
+Support for Scala 2.11, 2.12, 2.13.
 
 Usage
 -----
@@ -187,6 +187,4 @@ The browser will be available at /halbrowser.
 
 TODO
 -----------
-Add multi-target Scala artifacts
-
 Find more contributors (hint).
