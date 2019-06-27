@@ -2,7 +2,7 @@ language: scala
 scala:
    - 2.12.8
 jdk:
-  - oraclejdk11
+  - openjdk11
 
 stages:
   - test
