@@ -28,6 +28,8 @@ credentials += Credentials(
 
 crossScalaVersions := supportedScalaVersions
 
+resolvers += Resolver.url("scoverage-bintray", url("https://dl.bintray.com/sksamuel/sbt-plugins/"))(Resolver.ivyStylePatterns)
+
 libraryDependencies ++= {
   val akkaV = "2.5.23"
   val akkaHttpV = "10.1.8"
