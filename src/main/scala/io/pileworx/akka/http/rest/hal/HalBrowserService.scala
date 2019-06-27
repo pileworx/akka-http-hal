@@ -5,6 +5,9 @@ import akka.http.scaladsl.server.directives._
 import ContentTypeResolver.Default
 import akka.http.scaladsl.server.Route
 
+/** akka-http Route to expose a HAL Browser
+  * Mix in this trait with ~ halBrowserRoutes to expose a HAL Browser at /halbrowser
+  */
 trait HalBrowserService {
   val halBrowserRoutes: Route =
   path("halbrowser") {

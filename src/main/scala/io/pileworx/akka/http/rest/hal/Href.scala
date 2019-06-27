@@ -2,7 +2,18 @@ package io.pileworx.akka.http.rest.hal
 
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 
+/** Builds the href for links
+  *
+  * If the X-Forwarded headers are available it constructs the URI based on the headers
+  * If the Request is available with out X-Forwarded the request URI parts are used.
+  * If the Request is not available, no changes are made to the URI
+  */
 object Href {
+  /** Makes the href URI if optional HTTP Request is available
+    *
+    * @param maybeRequest Optional HTTP Request
+    * @return An adjusted URI
+    */
   def make(maybeRequest:Option[HttpRequest]):String = maybeRequest match {
     case Some(req) => if (containsForwarded(req)) ForwardedBuilder(req).build else UrlBuilder(req).build
     case None => ""
@@ -13,6 +24,10 @@ object Href {
   }
 }
 
+/** Builder to construct URI from X-Forwarded headers
+  *
+  * @param req The current HTTP Request
+  */
 case class ForwardedBuilder(req:HttpRequest) {
   private val withProto:Option[String] = req.headers.collectFirst {
     case h:HttpHeader if h.name == "X-Forwarded-Proto" => h.value
@@ -32,6 +47,10 @@ case class ForwardedBuilder(req:HttpRequest) {
     case h:HttpHeader if h.name == "X-Forwarded-Prefix" => h.value
   }
 
+  /** Builds the URI
+    *
+    * @return The altered URI with X-Forwarded parts
+    */
   def build: String = withProto match  {
     case Some(xfp) => addHost(s"$xfp://")
     case _ => withHost match {
@@ -60,10 +79,18 @@ case class ForwardedBuilder(req:HttpRequest) {
   }
 }
 
+/** Builder to construct URI from HTTP Request URI parts
+  *
+  * @param req The current HTTP Request
+  */
 case class UrlBuilder(req:HttpRequest) {
   private val proto:String = req.uri.scheme
   private val host:String = req.uri.authority.host.address
   private val port:Int = req.uri.authority.port
 
+  /** Builds the URI
+    *
+    * @return The altered URI with HTTP Request URI parts
+    */
   def build = s"$proto://$host:$port"
 }
