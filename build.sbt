@@ -1,5 +1,5 @@
 name := """akka-http-hal"""
-version := "1.2.1"
+version := "1.2.2"
 organization := "io.pileworx"
 homepage := Some(url("https://pileworx.io"))
 scmInfo := Some(
