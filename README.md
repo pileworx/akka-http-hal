@@ -11,16 +11,12 @@ Licensed under the Apache 2 license.
 
 Getting Started
 ---------------
-We are currently working to add the binary to Maven Central. Until then, add using sbt.
 
-In your build.sbt add:
+Installation:
 ```scala
-lazy val akkaHttpHal = ProjectRef(
-  uri("https://github.com/marcuslange/akka-http-hal.git"),
-  "akka-http-hal")
-
-lazy val root = (project in file(".")).dependsOn(akkaHttpHal)
+libraryDependencies += "io.pileworx" %% "akka-http-hal" % "1.2.2"
 ```
+This initial Maven Central Release only support Scala 2.12
 
 Usage
 -----
@@ -191,5 +187,6 @@ The browser will be available at /halbrowser.
 
 TODO
 -----------
-Publish to maven central.  
+Add multi-target Scala artifacts
+
 Find more contributors (hint).

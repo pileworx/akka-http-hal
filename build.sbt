@@ -22,7 +22,7 @@ publishTo := Some(
 )
 scalaVersion := "2.12.8"
 scalacOptions := Seq("-feature", "-deprecation", "-encoding", "utf8")
-credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", sys.env.getOrElse("SONATYPE_USER", ""), sys.env.getOrElse("SONATYPE_PASSWORD", ""))
+credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", sys.env.getOrElse("SONATYPE_USER", "mlange"), sys.env.getOrElse("SONATYPE_PASSWORD", "Clk12001200!"))
 
 libraryDependencies ++= {
   val akkaV = "2.5.21"
