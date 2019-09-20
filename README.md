@@ -71,6 +71,7 @@ trait FooAdapter extends FooProtocol {
       ))
     ).build
   }
+}
 ```
 Create your routes:
 ```scala
@@ -154,7 +155,7 @@ Map(
   "multiple_links" -> Links(Seq(
     Link(href = url, name = Some("one")),
     Link(href = url, name = Some("two"))
-))
+)))
 ```
 
 HttpRequest Support
@@ -165,16 +166,15 @@ By default the HAL links will not include the host or port.
 If you would like host, port, or path prefix included, provide the HttpRequest.
 
 ```scala
-  def toResource(foo: FooDto, req: HttpRequest): JsValue = {
-    ResourceBuilder(
-      withRequest = req,
-      withData = Some(foo.toJson),
-      withLinks = Some(Map(
-        fooLink("self", foo.id),
-        foosLink("parent")
-      ))
-    ).build
-  }
+def toResource(foo: FooDto, req: HttpRequest): JsValue = {
+  ResourceBuilder(
+    withRequest = req,
+    withData = Some(foo.toJson),
+    withLinks = Some(Map(
+      fooLink("self", foo.id),
+      foosLink("parent")
+    ))
+  ).build
 }
 ```
 
