@@ -14,7 +14,7 @@ Getting Started
 
 Installation:
 ```scala
-libraryDependencies += "io.pileworx" %% "akka-http-hal" % "1.2.3"
+libraryDependencies += "io.pileworx" %% "akka-http-hal" % "1.2.4"
 ```
 Support for Scala 2.11, 2.12, 2.13.
 
