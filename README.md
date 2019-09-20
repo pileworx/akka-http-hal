@@ -26,6 +26,12 @@ trait FooProtocol extends DefaultJsonProtocol {
   implicit val fooFormat = jsonFormat3(FooDto)
 }
 ```
+
+You can import a collection of IANA Relations (SELF, NEXT, etc):
+```scala
+import io.pileworx.akka.http.rest.hal.Relations._
+```
+
 Create a resource adapter:
 ```scala
 trait FooAdapter extends FooProtocol {
@@ -35,15 +41,15 @@ trait FooAdapter extends FooProtocol {
   def newResource(id: String): JsValue = {
     ResourceBuilder(
       withLinks = Some(Map(
-        fooLink("self", id),
-        foosLink("parent")
+        fooLink(SELF, id),
+        foosLink(UP)
       ))
     ).build
   }
 
   def notFoundResource: JsValue = {
     ResourceBuilder(
-      withLinks = Some(Map(contactsLink("parent")))
+      withLinks = Some(Map(contactsLink(UP)))
     ).build
   }
 
@@ -52,7 +58,7 @@ trait FooAdapter extends FooProtocol {
       withEmbedded = Some(Map(
         "foos" -> foos.map(f => toResource(f))
       )),
-      withLinks = Some(Map(foosLink("self")))
+      withLinks = Some(Map(foosLink(SELF)))
     ).build
   }
 
@@ -60,8 +66,8 @@ trait FooAdapter extends FooProtocol {
     ResourceBuilder(
       withData = Some(foo.toJson),
       withLinks = Some(Map(
-        fooLink("self", foo.id),
-        foosLink("parent")
+        fooLink(SELF, foo.id),
+        foosLink(UP)
       ))
     ).build
   }
