@@ -2,6 +2,7 @@ package io.pileworx.akka.http.rest.hal
 
 import org.scalatest.{Matchers, WordSpec}
 import spray.json._
+import io.pileworx.akka.http.rest.hal.Relations._
 
 trait FakeDataProtocol extends DefaultJsonProtocol {
   implicit val fakeDataFormat: RootJsonFormat[FakeData] = jsonFormat2(FakeData)
@@ -14,8 +15,8 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
   val url = "http://www.test.com"
   val data: JsValue = FakeData("one","two").toJson
   val links:Map[String, LinkT] = Map(
-    "self" -> Link(href = url),
-    "parent" -> Link(href = url)
+    SELF -> Link(href = url),
+    UP -> Link(href = url)
     )
   val linksNested:Map[String, LinkT] = Map(
     "link_nested" -> Links(Seq(Link(href = url, title = Some("one")),Link(href = url, title = Some("two"))))
@@ -32,8 +33,8 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = Some(links)).build.toString
 
       result should include(url)
-      result should include("self")
-      result should include("parent")
+      result should include(SELF)
+      result should include(UP)
       result should include("_links")
     }
 

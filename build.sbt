@@ -5,7 +5,7 @@ lazy val supportedScalaVersions = List(scala213, scala212, scala211)
 
 name := """akka-http-hal"""
 
-version := "1.2.3"
+version := "1.2.4"
 
 organization := "io.pileworx"
 
