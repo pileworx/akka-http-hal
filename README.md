@@ -14,7 +14,7 @@ Getting Started
 
 Installation:
 ```scala
-libraryDependencies += "io.pileworx" %% "akka-http-hal" % "1.2.3"
+libraryDependencies += "io.pileworx" %% "akka-http-hal" % "1.2.4"
 ```
 Support for Scala 2.11, 2.12, 2.13.
 
@@ -26,6 +26,12 @@ trait FooProtocol extends DefaultJsonProtocol {
   implicit val fooFormat = jsonFormat3(FooDto)
 }
 ```
+
+You can import a collection of IANA Relations (Self, Next, etc):
+```scala
+import io.pileworx.akka.http.rest.hal.Relations._
+```
+
 Create a resource adapter:
 ```scala
 trait FooAdapter extends FooProtocol {
@@ -35,15 +41,15 @@ trait FooAdapter extends FooProtocol {
   def newResource(id: String): JsValue = {
     ResourceBuilder(
       withLinks = Some(Map(
-        fooLink("self", id),
-        foosLink("parent")
+        fooLink(Self, id),
+        foosLink(Up)
       ))
     ).build
   }
 
   def notFoundResource: JsValue = {
     ResourceBuilder(
-      withLinks = Some(Map(contactsLink("parent")))
+      withLinks = Some(Map(contactsLink(Up)))
     ).build
   }
 
@@ -52,7 +58,7 @@ trait FooAdapter extends FooProtocol {
       withEmbedded = Some(Map(
         "foos" -> foos.map(f => toResource(f))
       )),
-      withLinks = Some(Map(foosLink("self")))
+      withLinks = Some(Map(foosLink(Self)))
     ).build
   }
 
@@ -60,11 +66,12 @@ trait FooAdapter extends FooProtocol {
     ResourceBuilder(
       withData = Some(foo.toJson),
       withLinks = Some(Map(
-        fooLink("self", foo.id),
-        foosLink("parent")
+        fooLink(Self, foo.id),
+        foosLink(Up)
       ))
     ).build
   }
+}
 ```
 Create your routes:
 ```scala
@@ -148,7 +155,7 @@ Map(
   "multiple_links" -> Links(Seq(
     Link(href = url, name = Some("one")),
     Link(href = url, name = Some("two"))
-))
+)))
 ```
 
 HttpRequest Support
@@ -159,16 +166,15 @@ By default the HAL links will not include the host or port.
 If you would like host, port, or path prefix included, provide the HttpRequest.
 
 ```scala
-  def toResource(foo: FooDto, req: HttpRequest): JsValue = {
-    ResourceBuilder(
-      withRequest = req,
-      withData = Some(foo.toJson),
-      withLinks = Some(Map(
-        fooLink("self", foo.id),
-        foosLink("parent")
-      ))
-    ).build
-  }
+def toResource(foo: FooDto, req: HttpRequest): JsValue = {
+  ResourceBuilder(
+    withRequest = req,
+    withData = Some(foo.toJson),
+    withLinks = Some(Map(
+      fooLink("self", foo.id),
+      foosLink("parent")
+    ))
+  ).build
 }
 ```
 
