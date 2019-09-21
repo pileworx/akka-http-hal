@@ -1,7 +1,6 @@
 package io.pileworx.akka.http.rest.hal
 
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
-import ForwardedBuilder._
 
 /** Builds the href for links
   *
@@ -31,23 +30,23 @@ object Href {
   */
 case class ForwardedBuilder(req:HttpRequest) {
   private[this] val withProto:Option[String] = req.headers.collectFirst {
-    case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedProto) => h.value
+    case h:HttpHeader if h.name.equalsIgnoreCase(ForwardedBuilder.XForwardedProto) => h.value
   }
 
   private[this] val withHost:Option[String] = {
     val xForwarded = req.headers.collectFirst {
-      case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedHost) => stripPort(h.value)
+      case h:HttpHeader if h.name.equalsIgnoreCase(ForwardedBuilder.XForwardedHost) => stripPort(h.value)
     }
     val hostHeader = if (req.uri.authority.host.address.length > 0) Some(req.uri.authority.host.address) else None
     if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
 
   private[this] val withPort:Option[String] = req.headers.collectFirst {
-    case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedPort) => h.value
+    case h:HttpHeader if h.name.equalsIgnoreCase(ForwardedBuilder.XForwardedPort) => h.value
   }
 
   private[this] val withPrefix:Option[String] = req.headers.collectFirst {
-    case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedPrefix) => h.value
+    case h:HttpHeader if h.name.equalsIgnoreCase(ForwardedBuilder.XForwardedPrefix) => h.value
   }
 
   /** Builds the URI
