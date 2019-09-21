@@ -61,37 +61,37 @@ case class ResourceBuilder(
     case _ => jsObject
   }
 
-  private def addEmbedded(jsObject:JsObject):JsObject = withEmbedded match {
+  private[this] def addEmbedded(jsObject:JsObject):JsObject = withEmbedded match {
     case Some(embedded) => JsObject(jsObject.fields + ("_embedded" -> embedded.toJson))
     case _ => jsObject
   }
 
   private def combinedLinks: Option[Map[String, Any]] = {
-    val combinedLinks = getLinks ++ combinedCuries
+    val combinedLinks = links ++ combinedCuries
     if (combinedLinks.isEmpty) None else Some(combinedLinks)
   }
 
-  private def getLinks:Map[String, LinkT] = withLinks match {
+  private def links:Map[String, LinkT] = withLinks match {
     case Some(links) => links
     case _ => Map()
   }
 
   private def combinedCuries:Map[String, Seq[Curie]] = {
-    val curies:Seq[Curie] = getGlobalCuries ++ getCuries
+    val curies:Seq[Curie] = globalCuries ++ addCuries
     if (curies.isEmpty) Map() else Map(("curies", curies))
   }
 
-  private def getCuries: Seq[Curie] = withCuries match {
+  private def addCuries: Seq[Curie] = withCuries match {
     case Some(curies) => curies
     case _ => Seq[Curie]()
   }
 
-  private def getGlobalCuries: Seq[Curie] = ResourceBuilder.globalCuries match {
+  private def globalCuries: Seq[Curie] = ResourceBuilder.globalCuries match {
     case Some(curies) => curies
     case _ => Seq[Curie]()
   }
 
-  private def curied(key: String) = key.contains(":")
+  private[this] def curied(key: String) = key.contains(":")
 
   private def curieHref(key: String, value: Link) = s"${if (!curied(key)) Href.make(withRequest)}${value.href}"
 }

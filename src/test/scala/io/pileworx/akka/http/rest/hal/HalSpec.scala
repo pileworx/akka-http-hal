@@ -15,8 +15,8 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
   val url = "http://www.test.com"
   val data: JsValue = FakeData("one","two").toJson
   val links:Map[String, LinkT] = Map(
-    SELF -> Link(href = url),
-    UP -> Link(href = url)
+    Self -> Link(href = url),
+    Up -> Link(href = url)
     )
   val linksNested:Map[String, LinkT] = Map(
     "link_nested" -> Links(Seq(Link(href = url, title = Some("one")),Link(href = url, title = Some("two"))))
@@ -33,8 +33,8 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
         withLinks = Some(links)).build.toString
 
       result should include(url)
-      result should include(SELF)
-      result should include(UP)
+      result should include(Self)
+      result should include(Up)
       result should include("_links")
     }
 
