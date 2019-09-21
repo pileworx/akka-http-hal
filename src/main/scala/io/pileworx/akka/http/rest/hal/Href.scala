@@ -30,7 +30,7 @@ object Href {
   * @param req The current HTTP Request
   */
 case class ForwardedBuilder(req:HttpRequest) {
-  private val withProto:Option[String] = req.headers.collectFirst {
+  private[this] val withProto:Option[String] = req.headers.collectFirst {
     case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedProto) => h.value
   }
 
@@ -42,11 +42,11 @@ case class ForwardedBuilder(req:HttpRequest) {
     if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
 
-  private val withPort:Option[String] = req.headers.collectFirst {
+  private[this] val withPort:Option[String] = req.headers.collectFirst {
     case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedPort) => h.value
   }
 
-  private val withPrefix:Option[String] = req.headers.collectFirst {
+  private[this] val withPrefix:Option[String] = req.headers.collectFirst {
     case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedPrefix) => h.value
   }
 
@@ -62,7 +62,7 @@ case class ForwardedBuilder(req:HttpRequest) {
     }
   }
 
-  private def addHost(protocol:String) = withHost match {
+  private[this] def addHost(protocol:String) = withHost match {
     case Some(xfh) => addPort(s"$protocol$xfh")
     case _ => addPort(protocol)
   }
@@ -72,12 +72,12 @@ case class ForwardedBuilder(req:HttpRequest) {
     case _ => addPrefix(host)
   }
 
-  private def addPrefix(port:String) = withPrefix match {
+  private[this] def addPrefix(port:String) = withPrefix match {
     case Some(xfp) => s"$port/$xfp"
     case _ => port
   }
 
-  private def stripPort(hostname:String) = {
+  private[this] def stripPort(hostname:String) = {
     if(hostname.contains(":")) hostname.split(":")(0) else hostname
   }
 }
