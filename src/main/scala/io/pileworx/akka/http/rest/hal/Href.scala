@@ -24,6 +24,13 @@ object Href {
   }
 }
 
+object ForwardedBuilder {
+  private val XForwardedProto = "X-Forwarded-Proto"
+  private val XForwardedHost = "X-Forwarded-Host"
+  private val XForwardedPort = "X-Forwarded-Port"
+  private val XForwardedPrefix = "X-Forwarded-Prefix"
+}
+
 /** Builder to construct URI from X-Forwarded headers
   *
   * @param req The current HTTP Request
@@ -79,13 +86,6 @@ case class ForwardedBuilder(req:HttpRequest) {
   private[this] def stripPort(hostname:String) = {
     if(hostname.contains(":")) hostname.split(":")(0) else hostname
   }
-}
-
-object ForwardedBuilder {
-  private val XForwardedProto = "X-Forwarded-Proto"
-  private val XForwardedHost = "X-Forwarded-Host"
-  private val XForwardedPort = "X-Forwarded-Port"
-  private val XForwardedPrefix = "X-Forwarded-Prefix"
 }
 
 /** Builder to construct URI from HTTP Request URI parts
