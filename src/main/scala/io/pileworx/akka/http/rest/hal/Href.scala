@@ -1,6 +1,7 @@
 package io.pileworx.akka.http.rest.hal
 
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
+import ForwardedBuilder._
 
 /** Builds the href for links
   *
@@ -19,7 +20,7 @@ object Href {
     case None => ""
   }
 
-  private def containsForwarded(req:HttpRequest) = {
+  private[this] def containsForwarded(req:HttpRequest) = {
     req.headers.exists(xf => xf.name.contains("X-Forwarded"))
   }
 }
@@ -30,21 +31,23 @@ object Href {
   */
 case class ForwardedBuilder(req:HttpRequest) {
   private val withProto:Option[String] = req.headers.collectFirst {
-    case h:HttpHeader if h.name == "X-Forwarded-Proto" => h.value
+    case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedProto) => h.value
   }
 
-  private val withHost:Option[String] = {
-    val xForwarded = req.headers.collectFirst { case h:HttpHeader if h.name == "X-Forwarded-Host" => stripPort(h.value) }
+  private[this] val withHost:Option[String] = {
+    val xForwarded = req.headers.collectFirst {
+      case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedHost) => stripPort(h.value)
+    }
     val hostHeader = if (req.uri.authority.host.address.length > 0) Some(req.uri.authority.host.address) else None
     if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
 
   private val withPort:Option[String] = req.headers.collectFirst {
-    case h:HttpHeader if h.name == "X-Forwarded-Port" => h.value
+    case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedPort) => h.value
   }
 
   private val withPrefix:Option[String] = req.headers.collectFirst {
-    case h:HttpHeader if h.name == "X-Forwarded-Prefix" => h.value
+    case h:HttpHeader if h.name.equalsIgnoreCase(XForwardedPrefix) => h.value
   }
 
   /** Builds the URI
@@ -64,7 +67,7 @@ case class ForwardedBuilder(req:HttpRequest) {
     case _ => addPort(protocol)
   }
 
-  private def addPort(host:String) = withPort match {
+  private[this] def addPort(host:String) = withPort match {
     case Some(xfp) => addPrefix(s"$host:$xfp")
     case _ => addPrefix(host)
   }
@@ -79,14 +82,21 @@ case class ForwardedBuilder(req:HttpRequest) {
   }
 }
 
+object ForwardedBuilder {
+  private val XForwardedProto = "X-Forwarded-Proto"
+  private val XForwardedHost = "X-Forwarded-Host"
+  private val XForwardedPort = "X-Forwarded-Port"
+  private val XForwardedPrefix = "X-Forwarded-Prefix"
+}
+
 /** Builder to construct URI from HTTP Request URI parts
   *
   * @param req The current HTTP Request
   */
 case class UrlBuilder(req:HttpRequest) {
-  private val proto:String = req.uri.scheme
-  private val host:String = req.uri.authority.host.address
-  private val port:Int = req.uri.authority.port
+  private[this] val proto:String = req.uri.scheme
+  private[this] val host:String = req.uri.authority.host.address
+  private[this] val port:Int = req.uri.authority.port
 
   /** Builds the URI
     *
