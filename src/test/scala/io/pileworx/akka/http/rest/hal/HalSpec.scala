@@ -218,9 +218,8 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
           href = curieUrl
         ))),
         withLinks = linksWithCurie(Link(
-          href = url,
-        ))
-      ).build.toString
+          href = url
+        ))).build.toString
 
       result should include(""""http://www.test.com"""")
     }
