@@ -5,9 +5,12 @@ jdk:
   - openjdk11
 
 stages:
+  - crosscompile
   - test
 
 jobs:
   include:
+    - stage: crosscompile
+      script: sbt +clean +test
     - stage: test
       script: sbt clean coverage test coverageReport coverageAggregate codacyCoverage
