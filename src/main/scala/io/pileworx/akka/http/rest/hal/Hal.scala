@@ -93,7 +93,7 @@ case class ResourceBuilder(
 
   private[this] def curied(key: String) = key.contains(":")
 
-  private[this] def curieHref(key: String, value: Link) = s"${if (!curied(key)) Href.make(withRequest)}${value.href}"
+  private[this] def curieHref(key: String, value: Link) = s"${if (!curied(key)) Href.make(withRequest) else ""}${value.href}"
 }
 
 /** Base trait for Link or a Collection of related Links
