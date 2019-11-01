@@ -210,6 +210,20 @@ class HalSpec extends WordSpec with Matchers with FakeDataProtocol {
       result should include(curieKey)
       result should include(curieUrl)
     }
+
+    "return links containing curies" in {
+      val result = ResourceBuilder(
+        withCuries = Some(Seq(Curie(
+          name = curieKey,
+          href = curieUrl
+        ))),
+        withLinks = linksWithCurie(Link(
+          href = url,
+        ))
+      ).build.toString
+
+      result should include(""""http://www.test.com"""")
+    }
   }
 
   def links(link:Link):Option[Map[String,Link]] = Some(Map("self" -> link))

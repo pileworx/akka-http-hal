@@ -29,6 +29,7 @@ object ForwardedBuilder {
   private val XForwardedHost = "X-Forwarded-Host"
   private val XForwardedPort = "X-Forwarded-Port"
   private val XForwardedPrefix = "X-Forwarded-Prefix"
+  private val portSeparator = ":"
 }
 
 /** Builder to construct URI from X-Forwarded headers
@@ -44,7 +45,7 @@ case class ForwardedBuilder(req:HttpRequest) {
     val xForwarded = req.headers.collectFirst {
       case h:HttpHeader if h.name.equalsIgnoreCase(ForwardedBuilder.XForwardedHost) => stripPort(h.value)
     }
-    val hostHeader = if (req.uri.authority.host.address.length > 0) Some(req.uri.authority.host.address) else None
+    val hostHeader = if (req.uri.authority.host.address.nonEmpty) Some(req.uri.authority.host.address) else None
     if (xForwarded.isInstanceOf[Some[String]]) xForwarded else hostHeader
   }
 
@@ -84,7 +85,10 @@ case class ForwardedBuilder(req:HttpRequest) {
   }
 
   private[this] def stripPort(hostname:String) = {
-    if(hostname.contains(":")) hostname.split(":")(0) else hostname
+    if(hostname.contains(ForwardedBuilder.portSeparator))
+      hostname.split(ForwardedBuilder.portSeparator)(0)
+    else
+      hostname
   }
 }
 
@@ -101,5 +105,5 @@ case class UrlBuilder(req:HttpRequest) {
     *
     * @return The altered URI with HTTP Request URI parts
     */
-  def build = s"$proto://$host:$port"
+  def build: String = s"$proto://$host:$port"
 }
